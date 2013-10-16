@@ -59,9 +59,11 @@ function shorten_team_name($team_name) {
 		case "New Jersey":
 			$short_name = "NJD";
 			break;
+		case "Ny Islanders":
 		case "NY Islanders":
 			$short_name = "NYI";
 			break;
+		case "Ny Rangers":
 		case "NY Rangers":
 			$short_name = "NYR";
 			break;
