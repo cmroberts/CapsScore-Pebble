@@ -211,7 +211,10 @@ function lengthen_team_name($team_name) {
  * match the CSV format of your team's schedule. 
  * 
  * The options are the same options passed to the script from the Pebble
- * watchface. Just pass in the same options array. 
+ * watchface. They should be as follows:
+ *	$options[1] = Team three-letter abbreviation (probably not needed here)
+ *	$options[2] = Date format. "MMDD" or "DDMM"
+ *	$options[3] = Time format. 12 or 24 (12-hour or 24-hour format)
  * 
  * The array returned should be as follows:
  * 	$result[2] = Opposing team abbreviation
@@ -430,8 +433,7 @@ if(!$game_found) {
 		
 	// Schedule is stored in a CSV file named "schedule_XXX.csv", where XXX is 
 	// the three-letter abbreviation for the team name.
-	$short_name = shorten_team_name($my_team);
-	$filename = "schedule_{$short_name}.csv";
+	$filename = "schedule_{$options[1]}.csv";
 	$schedule = file($filename);
 	if ($schedule) {
 		$sched_results = parse_schedule($schedule, $options, $my_team);
