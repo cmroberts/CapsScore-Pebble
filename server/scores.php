@@ -205,6 +205,55 @@ function lengthen_team_name($team_name) {
 	return $long_name;
 }
 
+/* Takes a CSV file (already opened) and parses it into an array.
+ * 
+ * If you're customizing this for different teams, you'll need to update this to
+ * match the CSV format of your team's schedule. 
+ * 
+ * The options are the same options passed to the script from the Pebble
+ * watchface. Just pass in the same options array. 
+ * 
+ * The array returned should be as follows:
+ * 	$result[2] = Opposing team abbreviation
+ * 	$result[3] = Next game date
+ * 	$result[4] = Next game time */
+function parse_schedule($schedule, $options, $my_team) {
+	unset($schedule[0]); // We don't need the column names.
+
+	foreach($schedule as $row_csv) {
+		$row = str_getcsv($row_csv);
+		$game_date_time = date_create_from_format("m/d/Y h:i a", "{$row[0]} {$row[2]}");
+		if($game_date_time > date_create()) {
+			// Put the date and time into the response object
+			if($options[2] == "MMDD") {
+				$result[3] = date_format($game_date_time, "n/j"); // Date: MM/DD
+			} else {
+				$result[3] = date_format($game_date_time, "j/n"); // Date: DD/MM
+			}
+			if ($options[3] == 12) {
+				$result[4] = date_format($game_date_time, "g:i A"); // Time - 12 hr format
+				// Need to shorten the time to fit the Pebble display
+				$result[4] = str_replace(" PM", "P", $result[4]);
+				$result[4] = str_replace(" AM", "A", $result[4]);
+			} else {
+				$result[4] = date_format($game_date_time, "H:i"); // Time - 24 hr format
+			}
+			//Figure out opposing team
+			preg_match("/(.+) at (.+)/", $row[3], $teams);
+			if($my_team == "Montreal") { $my_team = "Montréal"; } // Why you gotta be like that, Montreal?
+			if($teams[1] == $my_team) {
+				$result[2] = "@" . shorten_team_name($teams[2]);
+			} else {
+				$result[2] = shorten_team_name($teams[1]);
+			}
+			
+			break; // only need the first game greater than the current date
+		}
+	}
+	
+	return $result;
+}
+
 /* *****************************************************************************
  * JSON FORMAT
  * 
@@ -381,43 +430,11 @@ if(!$game_found) {
 		
 	// Schedule is stored in a CSV file named "schedule_XXX.csv", where XXX is 
 	// the three-letter abbreviation for the team name.
-	// If you want to customize this for your team, you'll need to tweak this parser. Looks like every team has their csv in a different format.
 	$short_name = shorten_team_name($my_team);
 	$filename = "schedule_{$short_name}.csv";
 	$schedule = file($filename);
 	if ($schedule) {
-		unset($schedule[0]); // We don't need the column names.
-		
-		foreach($schedule as $row_csv) {
-			$row = str_getcsv($row_csv);
-			$game_date_time = date_create_from_format("m/d/Y h:i a", "{$row[0]} {$row[2]}");
-			if($game_date_time > date_create()) {
-				// Put the date and time into the JSON file
-				if($options[2] == "MMDD") {
-					$response[3] = date_format($game_date_time, "n/j"); // Date: MM/DD
-				} else {
-					$response[3] = date_format($game_date_time, "j/n"); // Date: DD/MM
-				}
-				if ($options[3] == 12) {
-					$response[4] = date_format($game_date_time, "g:i A"); // Time - 12 hr format
-					// Need to shorten the time to fit the Pebble display
-					$response[4] = str_replace(" PM", "P", $response[4]);
-					$response[4] = str_replace(" AM", "A", $response[4]);
-				} else {
-					$response[4] = date_format($game_date_time, "H:i"); // Time - 24 hr format
-				}
-				//Figure out opposing team
-				preg_match("/(.+) at (.+)/", $row[3], $teams);
-				if($my_team == "Montreal") { $my_team = "Montréal"; } // Why you gotta be like that, Montreal?
-				if($teams[1] == $my_team) {
-					$response[2] = "@" . shorten_team_name($teams[2]);
-				} else {
-					$response[2] = shorten_team_name($teams[1]);
-				}
-				
-				break; // only need the first game greater than the current date
-			}
-		}
+		$sched_results = parse_schedule($schedule, $options, $my_team);
 	}
 }
 
@@ -425,7 +442,12 @@ if(!$game_found) {
 // $response[1] will hold the format to encode the data in, as specified above.
 switch($response[1]) {
 	case 0:
-		break; // Already set everything when we parsed the schedule above
+		if ($sched_results) {
+			$response[2] = $sched_results[2];
+			$response[3] = $sched_results[3];
+			$response[4] = $sched_results[4];
+		}
+		break;
 	case 1:
 		$response[2] = $home_team;
 		$response[3] = $away_team;
