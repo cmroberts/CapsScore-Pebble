@@ -15,9 +15,9 @@
 #define IOS
 
 /* Specifies light or dark theme:
- * LIGHT_BG : White background, black text, image resource named LOGO_WHITEBG
+ * WHITE_BG : White background, black text, image resource named LOGO_WHITEBG
  * BLACK_BG : Black backgorund, white text, image resource named LOGO_BLACKBG */
-#define BLACK_BG
+#define WHITE_BG
 
 /* Specifies whether the day or month comes first in dates:
  * DATE_MMDD : "12/31" or "Dec 31"

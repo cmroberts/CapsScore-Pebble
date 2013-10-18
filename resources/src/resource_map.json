@@ -1,19 +1,10 @@
 {
     "media": [
         {
-            "defName": "LOGO_BLACKBG",
-            "type": "png",
-            "file": "images/logo_blackbg_small2.png"
-        },
-        {
-            "defName": "ICON",
-            "type": "png",
-            "file": "images/icon_whitebg.png"
-        },
-        {
-            "defName": "LOGO_WHITEBG",
-            "type": "png",
-            "file": "images/logo_whitebg_small.png"
+            "characterRegex": "[A-Z0-9@:?. ]",
+            "defName": "FONT_DROID_SANS_MONO_18",
+            "type": "font",
+            "file": "fonts/DroidSansMono.ttf"
         },
         {
             "characterRegex": "[A-Z0-9:. \\-\\/]",
@@ -22,10 +13,19 @@
             "file": "fonts/ARIALNB.TTF"
         },
         {
-            "characterRegex": "[A-Z0-9@:?. ]",
-            "defName": "FONT_DROID_SANS_MONO_18",
-            "type": "font",
-            "file": "fonts/DroidSansMono.ttf"
+            "defName": "LOGO_WHITEBG",
+            "type": "png",
+            "file": "images/logo_whitebg_small.png"
+        },
+        {
+            "defName": "ICON",
+            "type": "png",
+            "file": "images/icon_whitebg.png"
+        },
+        {
+            "defName": "LOGO_BLACKBG",
+            "type": "png",
+            "file": "images/logo_blackbg_small2.png"
         }
     ],
     "friendlyVersion": "VERSION",
