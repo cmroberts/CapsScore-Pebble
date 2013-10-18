@@ -1,7 +1,5 @@
 <?php
 
-//define("TEAM_NAME", "Washington");
-
 /* Takes a long-form team name and returns a three-letter abbreviation */
 function shorten_team_name($team_name) {
 	$short_name = "";
@@ -212,7 +210,7 @@ function lengthen_team_name($team_name) {
  * 
  * The options are the same options passed to the script from the Pebble
  * watchface. They should be as follows:
- *	$options[1] = Team three-letter abbreviation (probably not needed here)
+ *	$options[1] = Team three-letter abbreviation
  *	$options[2] = Date format. "MMDD" or "DDMM"
  *	$options[3] = Time format. 12 or 24 (12-hour or 24-hour format)
  * 
@@ -220,7 +218,18 @@ function lengthen_team_name($team_name) {
  * 	$result[2] = Opposing team abbreviation
  * 	$result[3] = Next game date
  * 	$result[4] = Next game time */
-function parse_schedule($schedule, $options, $my_team) {
+function parse_schedule($options) {
+	// Schedule is stored in a CSV file named "schedule_XXX.csv", where XXX is 
+	// the three-letter abbreviation for the team name.
+	$filename = "schedule_{$options[1]}.csv";
+	$schedule = file($filename);
+	
+	if (!$schedule) {
+		return;
+	}
+	
+	$my_team = lengthen_team_name($options[1]);
+	
 	unset($schedule[0]); // We don't need the column names.
 
 	foreach($schedule as $row_csv) {
@@ -312,7 +321,7 @@ function parse_schedule($schedule, $options, $my_team) {
  * 	"3": Home team score,
  * 	"4": Away team,
  * 	"5": Away team score,
- * 	"6": Final status (F, F/OT, F/SO)
+ * 	"6": Final status (FINAL, F/OT, F/SO)
  * }
  */
 
@@ -431,13 +440,7 @@ foreach($scores->GAME as $game) { // Loop through the games to find the one for 
 if(!$game_found) {
 	$response[1] = 0;
 		
-	// Schedule is stored in a CSV file named "schedule_XXX.csv", where XXX is 
-	// the three-letter abbreviation for the team name.
-	$filename = "schedule_{$options[1]}.csv";
-	$schedule = file($filename);
-	if ($schedule) {
-		$sched_results = parse_schedule($schedule, $options, $my_team);
-	}
+	$sched_results = parse_schedule($options);
 }
 
 // If a game was found, build the response array and print it as a JSON file. 
