@@ -31,7 +31,7 @@ Game scheduled, white background:
 
 Game scheduled, black background:
 
-![](http://i.imgur.com/I8WbGIZ.jpg)
+![](http://i.imgur.com/8BFgCF6.jpg)
 
 ## Features
 
