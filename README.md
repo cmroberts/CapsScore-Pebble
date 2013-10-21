@@ -62,6 +62,7 @@ Game scheduled, black background:
 * Cannot currently handle post-season data. I plan to update it before the playoffs begin, but I wanted to get an ititial release out.
 * All game start times are displayed in Eastern Time. I'd like to try to handle converting to the Pebble's timezone in the future, but this is a low priority unless people clamor for it.
 * Every once in a while, a timer seems not to get set correctly, or the watch face doesn't seem to get back its initial data pull. I can't figure out what's causing this, but you can always manually refresh by switching out of then back into the watchface.
+* The "day" for the data appears to start at 12:00 noon. So the previous night's scores will be displayed until then, and the "day of game" mode won't begin until after noon.
 
 ----
 
